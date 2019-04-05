@@ -1,0 +1,94 @@
+---
+title: "ST 412/512 Homework 1"
+author: "Vijay Tadimeti"
+date: "Spring 2019"
+output:
+  pdf_document: default
+  word_document: default
+  html_notebook: default
+subtitle: Due on April 10
+---
+
+```{r}
+library(ggplot2)
+library(Sleuth3)
+head(ex0914)
+?ex0914
+```
+
+1 a)
+
+```{r}
+attach(ex0914)
+plot(Bank, Heart, main="Scatterplot for heart vs bank", 
+   xlab="Bank ", ylab="Heart ", pch=19)
+```
+
+```{r}
+attach(ex0914)
+plot(Walk, Heart, main="Scatterplot for Heart vs Walk", 
+   xlab="Walk ", ylab="Heart ", pch=19)
+
+```
+
+```{r}
+attach(ex0914)
+plot(Talk, Heart, main="Scatterplot for Heart vs Talk", 
+   xlab="Talk ", ylab="Heart ", pch=19)
+```
+1 b)
+
+```{r}
+mod1 <- lm(Heart ~ Bank, data = ex0914)
+mod2 <- lm(Heart ~ Walk, data = ex0914)
+mod3 <- lm(Heart ~ Talk, data = ex0914)
+
+```
+
+1 d)
+#least square fir for heart on bank
+```{r}
+mod1 <- lm(Heart ~ Bank, data = ex0914)
+summary(mod1)
+```
+#least square fit for heart on walk
+
+```{r}
+mod2 <- lm(Heart ~ Walk, data = ex0914)
+summary(mod2)
+
+```
+#least square fit for heart on talk
+
+```{r}
+mod3 <- lm(Heart ~ Talk, data = ex0914)
+summary(mod3)
+```
+#Residual versus fitted values for each of regression
+1 c) 
+
+```{r}
+res1 = residuals(mod1)
+fit1 = predict(mod1)
+# Diagnostic Plot 1: Residuals versus fitted values
+plot(fit1, res1, xlab = "Fitted Values", ylab = "Residuals", cex = 0.8)
+abline(h = 0)
+```
+
+```{r}
+res2 = residuals(mod2)
+fit2 = predict(mod2)
+# Diagnostic Plot 1: Residuals versus fitted values
+plot(fit2, res2, xlab = "Fitted Values", ylab = "Residuals", cex = 0.8)
+abline(h = 0)
+
+```
+
+```{r}
+res3 = residuals(mod3)
+fit3 = predict(mod3)
+# Diagnostic Plot 1: Residuals versus fitted values
+plot(fit3, res3, xlab = "Fitted Values", ylab = "Residuals", cex = 0.8)
+abline(h = 0)
+```
+
