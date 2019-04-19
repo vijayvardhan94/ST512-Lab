@@ -1,0 +1,155 @@
+---
+title: "ST 412/512 Homework 2"
+author: "Vijay Tadimeti"
+date: "Spring 2019"
+output:
+  word_document: default
+  pdf_document: default
+  html_notebook: default
+subtitle: Due on April 17
+---
+Problem 1
+
+1a)
+
+```{r}
+library("Sleuth3")
+library(ggplot2)
+#ex0918
+new_data1 <- data.frame(Wing = ex0918$Females,
+                       Sex = "Female",
+                       Continent = ex0918$Continent,
+                       Latitude = ex0918$Latitude
+                       )
+
+new_data2 <- data.frame(Wing = ex0918$Males,
+                       Sex = "Male",
+                       Continent = ex0918$Continent,
+                       Latitude = ex0918$Latitude
+                       )
+new_data <- rbind(new_data1,new_data2)
+new_data$type <- paste(new_data$Sex, new_data$Continent, sep = "_")
+
+#new_data
+
+qplot(Latitude, Wing, data=new_data, color=type, 
+      facets=Sex~Continent, size=I(2),
+      xlab="Latitude", ylab="Wingspan")
+```
+From the above plot we can see that the wing sizes of the NA flies have evolved toward the same cline as in EU.
+
+1b)
+
+μ(Wings | Latitude, Sex, Continent) = β0 + β1Latitude + β2Female + β3NA + β4(Latitude X Female) + β5(Latitude X NA) + β6(Female X NA) + β7(Latitude X Female X NA)
+ 
+ (i) 
+#difference between the slope parameters of latitude corresponding to NA and EU for males.
+Females = 0, NA = 1 
+  μ(Wings | Latitude, Sex, Continent) = β0 + β1Latitude + β3  + β5(Latitude) = (β0 +  β3)  + (β5 + β1) (Latitude) 
+
+Females = 0, NA = 0
+   μ(Wings | Latitude, Sex, Continent) = β0 + β1Latitude 
+   
+Hence the difference between the slope parameter is β5
+
+(ii)
+#difference between the NA and EU slope difference (difference between the slope parameters of latitude) for females and that for males.
+So, now values are: Females = 1, NA = 1 
+ μ(Wings | Latitude, Sex, Continent) = β0 + β1Latitude + β2 + β3 + β4(Latitude) + β5(Latitude) + β6 + β7(Latitude) = 
+    (β0 + β2 + β3 + β6 ) + (β1 + β4 + β5 + β7)Latitude
+
+Also values are: Females = 1, NA = 0
+ μ(Wings | Latitude, Sex, Continent) = β0 + β1Latitude + β2 + β4(Latitude) = (β0 + β2) +  (β1 + β4)(Latitude)
+ 
+From the above model, 
+The difference between the slope parameter for female is β5 + β7.So, the difference between the slope parameter for female and male is (β5 + β7) - β5 = β7
+  
+
+(iii)
+#difference  between  the  intercepts  of  themodel of NA and EU for males.
+From question  (i)'s solution we con consider the intercept terms.The difference between the intercept parameters is β3
+
+(iv)
+#difference between the NA and EU intercepts’difference for females and that for males.
+Similarly from question (ii)'s solution, we can find the difference between the intercept parameter is (β3 + β6) - β3  = β6
+
+1c)
+
+```{r}
+new_data$Continent <- as.factor(new_data$Continent)
+test <- lm(Wing ~ Latitude + Sex + Continent + (Latitude*Sex) + (Latitude*Continent) + (Sex*Continent) + (Latitude * Sex * Continent ) , data = new_data )
+summary(test)
+```
+The model is:
+μ(Wings | Latitude, Sex, Continent) = β0 + β1Latitude + β2Female + β3NA + β4(Latitude * Female) + β5(Latitude * NA) + β6(Female * NA) + β7(Latitude * Female * NA)
+Hence our values for all betas are:
+β5 = -1.7544
+β7 = 2.0653
+β3 = 72.9386
+β6 = -89.8325
+
+
+Problem 2
+Kentucky Derby
+2a)
+
+```{r}
+library(Sleuth3)
+?ex0920
+#View(ex0920)
+
+```
+#Fit a linear regression model for describing the mean of winning time as a function of Year to the data.
+```{r}
+fit1 <- lm(Time ~ Year, data = ex0920)
+summary(fit1)
+```
+Null Hypothesis: Ho:β1 = 0
+HA:β1 != 0
+Here we see that the slope is lesser than 0. From the p value we can see that it is less than 0 as well;Hence we reject the null hypothesis that slope parameter is 0 in favour of the alternate hypothesis β1 != 0.
+
+#Fit a linear regression model for describing the mean of winning time as a function of Year and track condition (Conditions) to the data.
+
+```{r}
+
+ex0920$Cond <- as.numeric(ex0920$Conditions == 'Slow') 
+ex0920$Cond
+```
+
+```{r}
+summary(lm(Time ~ Year + Cond, data = ex0920))
+```
+```{r}
+ex0920$Cond <- as.numeric(ex0920$Conditions == 'Fast') 
+ex0920$Cond
+```
+```{r}
+summary(lm(Time ~ Year + Cond, data = ex0920))
+```
+On the fitted model, we see that the the amount by which the mean winning time on fast tracks exceeds the mean on slow tracks (using the two-category variable Conditions) for a fixed Year is 3.611614.
+
+
+2b)
+```{r}
+ex0920$Starter_f <- factor(ex0920$Starters)
+str(ex0920$Starter_f)
+levels(ex0920$Starter_f)
+
+ex0920$Starter_f <- factor(ex0920$Starter_f, levels =c("3","4","5","6","7","8","9","10","11","12","13","14","15","16","17", "18","19","20","21","22","23"))
+levels(ex0920$Starter_f)
+
+fit_2 <- lm(Time ~ Year +  factor(Starters) + Conditions  , data = ex0920)
+summary(fit_2)
+
+```
+```{r}
+summary(lm(Time ~ Year + Conditions + Starters, data = ex0920))
+```
+
+Here we can see that in both the models the p value is not significant. Hence, The variables corresponding to Starters is not significant to the mean winning time in both model 1 and model 2.
+
+2c)
+```{r}
+summary(lm(Time ~ Year + Conditions + Starters + (Conditions * Starters), data = ex0920))
+```
+Here we can say that there doesnt exist an evidence of an interactive effect of Starters and Conditions because we can observe that the p value is 0.121 and is insignificant. In a similar manner based on the pvalue 0.276 which is insignificant we can conclude that there is no effect of number of horses on mean winning time.
