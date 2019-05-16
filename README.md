@@ -1,1 +1,1 @@
-# ST512-Lab
+# ST512-Labs and Assignments
